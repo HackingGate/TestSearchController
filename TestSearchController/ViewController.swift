@@ -24,7 +24,8 @@ class ViewController: UIViewController {
         
         // For debug
         self.view.backgroundColor = UIColor.cyan
-        self.navigationController?.navigationBar.barTintColor = UIColor.yellow
+        self.navigationController?.navigationBar.barTintColor = UIColor.black
+        self.navigationController?.navigationBar.barStyle = .black
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -54,6 +55,20 @@ class ViewController: UIViewController {
 //        }
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let nc = navigationController {
+            for constraint in nc.navigationBar.constraints {
+                if constraint.firstAttribute == NSLayoutAttribute.height {
+                    if nc.navigationBar.frame.origin.y == -constraint.constant {
+                        // system will return UIStatusBarStyle.default even when navigation bar style is .black.
+                        // a workaround to fix this
+                        return nc.navigationBar.barStyle == .black ? .lightContent : .default
+                    }
+                }
+            }
+        }
+        return super.preferredStatusBarStyle
+    }
     
     @objc func barHideAction(_ guesture: UITapGestureRecognizer) {
         updateFrame()
